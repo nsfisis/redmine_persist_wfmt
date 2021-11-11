@@ -13,3 +13,15 @@ end
 
 require 'application_helper'
 ApplicationHelper.prepend(Pwfmt::ApplicationHelperPatch)
+
+module ApplicationHelper
+  alias __parse_non_pre_blocks__ parse_non_pre_blocks
+
+  # propagate 'wiki_format' to macro expansion.
+  def parse_non_pre_blocks(text, obj, macros, options={}, &block)
+    if text.respond_to?(:wiki_format)
+      options[:wiki_format] = text.wiki_format
+    end
+    __parse_non_pre_blocks__(text, obj, macros, options, &block)
+  end
+end
